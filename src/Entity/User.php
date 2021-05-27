@@ -58,7 +58,7 @@ class User implements UserInterface
 
     public const ROLES = [
         'Utilisateur' => ['ROLE_USER'],
-        'Aministrateur' => ['ROLE_USER', 'ROLE_ADMIN'],
+        'Administrateur' => ['ROLE_USER', 'ROLE_ADMIN'],
     ];
 
     public function __construct()
