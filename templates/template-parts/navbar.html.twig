@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;" role="navigation">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('app_home') }}">To Do List app</a>
+    
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            {% if app.user %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('task_list') }}">Les tâches</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{ app.user.username }}
+                    </a> 
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ path('user_create') }}">Créer un utilisateur</a>
+                        <a class="dropdown-item" href="#">Mon profil</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ path('app_logout') }}">Se déconnecter</a>
+                    </div>
+                </li>
+            {% else %}
+                {% if 'app_login' != app.request.attributes.get('_route') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
+                    </li>
+                {% endif %}
+                {% if 'app_register' != app.request.attributes.get('_route') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_register') }}">S'inscrire</a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        </ul>
+    </div>
+    </div>
+</nav>

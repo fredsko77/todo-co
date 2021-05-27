@@ -6,11 +6,15 @@
     {% endif %}
 
     <form action="{{ path('login_check') }}" method="post">
-        <label for="username">Nom d'utilisateur :</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}" />
+        <div class="form-group">
+            <label for="username">Nom d'utilisateur :</label>
+            <input class="form-control" type="text" id="username" name="_username" value="{{ last_username }}" />
+        </div>    
 
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" name="_password" />
+        <div class="form-group">
+            <label for="password">Mot de passe :</label>
+            <input class="form-control" type="password" id="password" name="_password" />
+        </div>
 
         <button class="btn btn-success" type="submit">Se connecter</button>
     </form>

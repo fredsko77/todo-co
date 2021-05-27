@@ -1,0 +1,15 @@
+{% if app.request.attributes.get('_route') == 'app_home' %}
+    {% set image = asset('img/todolist_homepage.jpg') %}
+{% else %}
+    {% set image = asset('img/todolist_content.jpg') %}
+{% endif  %}
+
+{% if app.request.attributes.get('_route') == 'app_home' %}
+    {% set class = 'slide-image' %}
+{% else %}
+    {% set class = 'slide-image content' %}
+{% endif  %}
+
+{% block header_img %}
+    <div class="{{ class }}" style="background-image: url({{ image }})" alt="todo list"></div> 
+{% endblock %}
