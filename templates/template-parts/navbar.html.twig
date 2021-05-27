@@ -17,8 +17,10 @@
                         {{ app.user.username }}
                     </a> 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="{{ path('user_create') }}">Créer un utilisateur</a>
-                        <a class="dropdown-item" href="#">Mon profil</a>
+                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                            <a class="dropdown-item" href="{{ path('user_create') }}">Créer un utilisateur</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="{{ path('app_profile') }}">Mon profil</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ path('app_logout') }}">Se déconnecter</a>
                     </div>

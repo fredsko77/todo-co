@@ -5,25 +5,69 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\RegistrationType;
 use App\Form\UserType;
+use App\Traits\ServicesTrait;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class UserController extends Controller
+class UserController extends AbstractController
 {
+
+    use ServicesTrait;
+
     /**
-     * @Route("/users", name="user_list")
+     * @var UserPasswordEncoderInterface $encoder
      */
-    public function listAction()
+    private $encoder;
+
+    /**
+     * @var EntityManagerInterface $manager
+     */
+    private $manager;
+
+    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager)
+    {
+        $this->encoder = $encoder;
+        $this->manager = $manager;
+    }
+
+    /**
+     * @Route(
+     *  "/admin/users",
+     *  name="user_list",
+     *  methods={"GET"}
+     * )
+     */
+    public function listAction(): Response
     {
         return $this->render('user/list.html.twig', ['users' => $this->getDoctrine()->getRepository('App:User')->findAll()]);
     }
 
     /**
-     * @Route("/users/create", name="user_create")
+     * @Route(
+     *  "/profile",
+     *  name="app_profile",
+     *  methods={"GET"}
+     * )
      */
-    public function createAction(Request $request)
+    public function profileAction(): Response
+    {
+        return $this->render('user/profile.html.twig', [
+            'profile' => $this->getUser(),
+        ]);
+    }
+
+    /**
+     * @Route(
+     *  "/admin/users/create",
+     *  name="user_create",
+     *  methods={"GET", "POST"}
+     * )
+     */
+    public function createAction(Request $request): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -31,12 +75,12 @@ class UserController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
+
+            $password = $this->encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
 
-            $em->persist($user);
-            $em->flush();
+            $this->manager->persist($user);
+            $this->manager->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été ajouté.");
 
@@ -47,19 +91,24 @@ class UserController extends Controller
     }
 
     /**
-     * @Route("/users/{id}/edit", name="user_edit")
+     * @Route(
+     *  "/admin/users/{id}/edit",
+     *  name="user_edit",
+     *  methods={"GET", "POST"}
+     * )
      */
-    public function editAction(User $user, Request $request)
+    public function editAction(User $user, Request $request): Response
     {
         $form = $this->createForm(UserType::class, $user);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $this->get('security.password_encoder')->encodePassword($user, $user->getPassword());
+            $password = $this->encoder->encodePassword($user, $user->getPassword());
             $user->setPassword($password);
 
-            $this->getDoctrine()->getManager()->flush();
+            $this->manager->persist($user);
+            $this->manager->flush();
 
             $this->addFlash('success', "L'utilisateur a bien été modifié");
 
@@ -76,18 +125,29 @@ class UserController extends Controller
      *  methods={"GET", "POST"}
      * )
      */
-    public function register(Request $request): Response
+    public function registerAction(Request $request): Response
     {
         $form = $this->createForm(RegistrationType::class);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+            $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()))
+                ->setRoles(User::ROLES['Utilisateur'])
+                ->setCreatedAt($this->now())
+            ;
 
+            $this->manager->persist($user);
+            $this->manager->flush();
+
+            $this->addFlash('success', 'Vous êtes inscrit ! 👍');
+
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('user/register.html.twig', [
             'form' => $form->createView(),
+            'title' => 'Page d\'inscription',
         ]);
     }
 }

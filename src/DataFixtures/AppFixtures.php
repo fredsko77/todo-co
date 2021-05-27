@@ -46,7 +46,7 @@ class AppFixtures extends Fixture
                 $task = new Task();
 
                 $task->setContent($faker->paragraph(4, true))
-                    ->setTitle(4, true)
+                    ->setTitle($faker->sentence(10))
                     ->setUser($u % 5 ? $user : null)
                     ->setCreatedAt($faker->dateTimeBetween('-4months'))
                     ->setIsDone($u % 7 ? true : false)
