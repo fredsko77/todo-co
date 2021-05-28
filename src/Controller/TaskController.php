@@ -4,12 +4,24 @@ namespace App\Controller;
 
 use App\Entity\Task;
 use App\Form\TaskType;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 class TaskController extends AbstractController
 {
+
+    /**
+     * @var EntityManagerInterface $manager
+     */
+    private $manager;
+
+    public function __construct(EntityManagerInterface $manager)
+    {
+        $this->manager = $manager;
+    }
+
     /**
      * @Route("/tasks", name="task_list")
      */
@@ -29,10 +41,9 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
 
-            $em->persist($task);
-            $em->flush();
+            $this->manager->persist($task);
+            $this->manager->flush();
 
             $this->addFlash('success', 'La tâche a été bien été ajoutée.');
 
@@ -47,12 +58,17 @@ class TaskController extends AbstractController
      */
     public function editAction(Task $task, Request $request)
     {
+
+        $this->denyAccessUnlessGranted('task_edit', $task);
+        $this->denyAccessUnlessGranted('task_edit_anonymous', $task);
+
         $form = $this->createForm(TaskType::class, $task);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $this->manager->persist($task);
+            $this->manager->flush();
 
             $this->addFlash('success', 'La tâche a bien été modifiée.');
 
@@ -70,8 +86,12 @@ class TaskController extends AbstractController
      */
     public function toggleTaskAction(Task $task)
     {
-        $task->toggle(!$task->setisDone());
-        $this->getDoctrine()->getManager()->flush();
+        $this->denyAccessUnlessGranted('task_edit', $task);
+        $this->denyAccessUnlessGranted('task_edit_anonymous', $task);
+
+        $task->toggle(!$task->getIsDone());
+        $this->manager->persist($task);
+        $this->manager->flush();
 
         $this->addFlash('success', sprintf('La tâche %s a bien été marquée comme faite.', $task->getTitle()));
 
@@ -83,9 +103,12 @@ class TaskController extends AbstractController
      */
     public function deleteTaskAction(Task $task)
     {
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($task);
-        $em->flush();
+
+        $this->denyAccessUnlessGranted('task_delete', $task);
+        $this->denyAccessUnlessGranted('task_delete_anonymous', $task);
+
+        $this->manager->remove($task);
+        $this->manager->flush();
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
 

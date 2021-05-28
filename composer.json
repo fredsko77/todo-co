@@ -23,7 +23,7 @@
         "symfony/monolog-bundle": "^3.1",
         "symfony/framework-bundle": "^4.4",
         "symfony/polyfill-apcu": "^1.0",
-        "sensio/framework-extra-bundle": "^3.0.2",
+        "sensio/framework-extra-bundle": "^6.1",
         "symfony/flex": "^1.13",
         "symfony/security-bundle": "^4.4",
         "symfony/serializer-pack": "^1.0",
