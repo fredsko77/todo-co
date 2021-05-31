@@ -4,5 +4,6 @@
 
 {% block body %}
     <a href="{{ path('task_create') }}" class="btn btn-info pull-right">Créer une tâche</a>
+    <a href="/?status=isDone" class="btn btn-warning pull-right">Consulter la liste des tâches terminées</a>
     {% include "task/_repeater.html.twig" %}
 {% endblock %}

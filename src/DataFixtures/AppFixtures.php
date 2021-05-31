@@ -29,7 +29,7 @@ class AppFixtures extends Fixture
         $faker = Factory::create('fr_FR');
         $roles = User::ROLES;
 
-        for ($u = 0; $u < random_int(24, 86); $u++) {
+        for ($u = 0; $u < random_int(94, 113); $u++) {
             $user = new User();
             $password = $this->encoder->encodePassword($user, 'P@ssTod0');
 
@@ -42,7 +42,7 @@ class AppFixtures extends Fixture
 
             $manager->persist($user);
 
-            for ($t = 0; $t < random_int(0, 18); $t++) {
+            for ($t = 0; $t < random_int(0, 98); $t++) {
                 $task = new Task();
 
                 $task->setContent($faker->paragraph(4, true))

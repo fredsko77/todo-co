@@ -18,7 +18,8 @@
                     </a> 
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         {% if is_granted('user_manage', app.user) %}
-                            <a class="dropdown-item" href="{{ path('user_create') }}">Créer un utilisateur</a>
+                            <a class="dropdown-item" href="{{ path('admin_user_list') }}">Gestion des utilisateurs</a>
+                            <a class="dropdown-item" href="{{ path('admin_user_create') }}">Créer un utilisateur</a>
                         {% endif %}
                         <a class="dropdown-item" href="{{ path('app_profile') }}">Mon profil</a>
                         <div class="dropdown-divider"></div>

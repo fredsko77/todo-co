@@ -35,7 +35,7 @@ class TaskController extends AbstractController
     public function listAction()
     {
         return $this->render('task/list.html.twig', [
-            'tasks' => $this->repository->findAll(),
+            'tasks' => $this->repository->findPaginatedTasks(),
         ]);
     }
 
@@ -80,6 +80,7 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $referer = $request->headers->get('referer');
             $this->manager->persist($task);
             $this->manager->flush();
 

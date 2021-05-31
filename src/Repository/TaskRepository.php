@@ -19,32 +19,51 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
+    /**
+     * @param int $page
+     * @param int $itemsPerPage
+     *
+     * @return Tasks[]
+     */
+    public function findPaginatedTasks(int $page = 0, int $itemsPerPage = 30, array $criteria = [], string $orderBy = 'ASC'): array
+    {
+        $starter = ($page * $itemsPerPage);
+
+        return $this->createQueryBuilder('t')
+            ->orderBy("t.createdAt", $orderBy)
+            ->setFirstResult($starter)
+            ->setMaxResults($itemsPerPage)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Task[] Returns an array of Task objects
     //  */
     /*
     public function findByExampleField($value)
     {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('t.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+    return $this->createQueryBuilder('t')
+    ->andWhere('t.exampleField = :val')
+    ->setParameter('val', $value)
+    ->orderBy('t.id', 'ASC')
+    ->setMaxResults(10)
+    ->getQuery()
+    ->getResult()
+    ;
     }
-    */
+     */
 
     /*
-    public function findOneBySomeField($value): ?Task
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
+public function findOneBySomeField($value): ?Task
+{
+return $this->createQueryBuilder('t')
+->andWhere('t.exampleField = :val')
+->setParameter('val', $value)
+->getQuery()
+->getOneOrNullResult()
+;
+}
+ */
 }

@@ -31,7 +31,7 @@ class UserController extends AbstractController
     /**
      * @Route(
      *  "/admin/users",
-     *  name="user_list",
+     *  name="admin_user_list",
      *  methods={"GET"}
      * )
      */
@@ -44,7 +44,7 @@ class UserController extends AbstractController
     /**
      * @Route(
      *  "/admin/users/create",
-     *  name="user_create",
+     *  name="admin_user_create",
      *  methods={"GET", "POST"}
      * )
      */
@@ -74,7 +74,7 @@ class UserController extends AbstractController
     /**
      * @Route(
      *  "/admin/users/{id}/edit",
-     *  name="user_edit",
+     *  name="admin_user_edit",
      *  methods={"GET", "POST"}
      * )
      */
@@ -93,7 +93,7 @@ class UserController extends AbstractController
 
             $this->addFlash('success', "L'utilisateur a bien été modifié");
 
-            return $this->redirectToRoute('user_list');
+            return $this->redirectToRoute('admin_user_index');
         }
 
         return $this->render('user/edit.html.twig', ['form' => $form->createView(), 'user' => $user]);
