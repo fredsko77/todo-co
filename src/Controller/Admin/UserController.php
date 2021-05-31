@@ -3,6 +3,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\UserRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,6 +19,16 @@ class UserController extends AbstractController
 {
 
     /**
+     * @var UserRepository $repository
+     */
+    private $repository;
+
+    public function __construct(UserRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    /**
      * @Route(
      *  "/admin/users",
      *  name="user_list",
@@ -26,7 +37,8 @@ class UserController extends AbstractController
      */
     public function listAction(): Response
     {
-        return $this->render('user/list.html.twig', ['users' => $this->getDoctrine()->getRepository('App:User')->findAll()]);
+        return $this->render('user/list.html.twig', [
+            'users' => $this->repository->findAll()]);
     }
 
     /**

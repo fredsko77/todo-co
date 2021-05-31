@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationType;
+use App\Repository\UserRepository;
 use App\Traits\ServicesTrait;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -27,10 +28,16 @@ class UserController extends AbstractController
      */
     private $manager;
 
-    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager)
+    /**
+     * @var UserRepository $repository
+     */
+    private $repository;
+
+    public function __construct(UserPasswordEncoderInterface $encoder, EntityManagerInterface $manager, UserRepository $repository)
     {
         $this->encoder = $encoder;
         $this->manager = $manager;
+        $this->repository = $repository;
     }
 
     /**

@@ -11,11 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class TaskVoter extends Voter
 {
 
-    const TASK_EDIT_ANONYMOUS = 'task_edit_anonymous';
-
     const TASK_EDIT = 'task_edit';
-
-    const TASK_DELETE_ANONYMOUS = 'task_delete_anonymous';
 
     const TASK_DELETE = 'task_delete';
 
@@ -25,9 +21,7 @@ class TaskVoter extends Voter
         // https://symfony.com/doc/current/security/voters.html
         return in_array($attribute, [
             self::TASK_EDIT,
-            self::TASK_EDIT_ANONYMOUS,
             self::TASK_DELETE,
-            self::TASK_DELETE_ANONYMOUS,
         ]) && $task instanceof Task;
     }
 
@@ -45,17 +39,9 @@ class TaskVoter extends Voter
                 // Vérifier si il le user peut éditer la tâche
                 return $this->canEdit($user, $task);
                 break;
-            case self::TASK_EDIT_ANONYMOUS:
-                // Vérifier si il le user peut éditer la tâche anonyme
-                return $this->canEditAnonymous($user, $task);
-                break;
             case self::TASK_DELETE:
                 // Vérifier si il le user peut supprimer la tâche
                 return $this->canDelete($user, $task);
-                break;
-            case self::TASK_DELETE_ANONYMOUS:
-                // Vérifier si il le user peut supprimer la tâche anonyme
-                return $this->canDeleteAnonymous($user, $task);
                 break;
         }
 
@@ -68,31 +54,9 @@ class TaskVoter extends Voter
      *
      * @return bool
      */
-    private function canDeleteAnonymous(?User $user, Task $task): bool
-    {
-        return in_array('ROLE_ADMIN', $user->getRoles()) && $task->getUser() === null;
-    }
-
-    /**
-     * @param User|null $user
-     * @param Task $task
-     *
-     * @return bool
-     */
     private function canDelete(?User $user, Task $task): bool
     {
-        return $user === $task->getUser();
-    }
-
-    /**
-     * @param User|null $user
-     * @param Task $task
-     *
-     * @return bool
-     */
-    private function canEditAnonymous(?User $user, Task $task): bool
-    {
-        return in_array('ROLE_ADMIN', $user->getRoles()) && $task->getUser() === null;
+        return $user === $task->getUser() || (in_array('ROLE_ADMIN', $user->getRoles()) && $task->getUser() === null);
     }
 
     /**
@@ -103,6 +67,6 @@ class TaskVoter extends Voter
      */
     private function canEdit(?User $user, Task $task): bool
     {
-        return $user === $task->getUser();
+        return $user === $task->getUser() || (in_array('ROLE_ADMIN', $user->getRoles()) && $task->getUser() === null);
     }
 }
