@@ -40,7 +40,9 @@
         <!-- Flashes Alert Content -->
         {% include "template-parts/flashes.html.twig" %}          
         <!-- Page title -->
-        {% block header_title %}{% endblock %}      
+        <div class="container-fluid">
+            {% block header_title %}{% endblock %}      
+        </div>
         <!-- Main Page Content -->
         <div class="container" id="main-content">
             {% block body %}{% endblock %}        

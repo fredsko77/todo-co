@@ -63,13 +63,18 @@ class UserController extends AbstractController
      */
     public function registerAction(Request $request): Response
     {
+
+        if ($this->getUser()) {
+            return $this->redirectToRoute('app_home');
+        }
+
         $form = $this->createForm(RegistrationType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
             $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()))
-                ->setRoles(User::ROLES['Utilisateur'])
+                ->setRoles(['ROLE_USER'])
                 ->setCreatedAt($this->now())
             ;
 

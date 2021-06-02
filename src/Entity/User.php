@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Traits\ServicesTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,6 +17,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User implements UserInterface
 {
+
+    use ServicesTrait;
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -57,8 +61,8 @@ class User implements UserInterface
     private $tasks;
 
     public const ROLES = [
-        'Utilisateur' => ['ROLE_USER'],
-        'Administrateur' => ['ROLE_USER', 'ROLE_ADMIN'],
+        'ROLE_USER' => 'Utilisateur',
+        'ROLE_ADMIN' => 'Administrateur',
     ];
 
     public function __construct()
@@ -137,9 +141,9 @@ class User implements UserInterface
         return $this->created_at;
     }
 
-    public function setCreatedAt(?\DateTimeInterface $created_at): self
+    public function setCreatedAt(): self
     {
-        $this->created_at = $created_at;
+        $this->created_at = $this->now();
 
         return $this;
     }
