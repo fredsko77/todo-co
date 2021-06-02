@@ -1,0 +1,39 @@
+{% set prev = (app.request.query.get('page') - 1) %}
+{% set path = '' %}
+{% set active = 0 %}
+{% if app.request.query.get('page') %}
+    {%  set active = type(app.request.query.get('page'), 'int') %}
+{% endif %}  
+
+
+{% if nbPage > 0 %}
+    <nav id="pagination" aria-label="Page navigation tasks">
+        <ul class="pagination">
+            <li class="page-item {% if app.request.query.get('page') == "0" or app.request.query.get('page') == null %} disabled {% endif %}">
+                <a 
+                    href="{{ path( app.request.attributes.get('_route'), app.request.query.all|merge({'page': prev})) }}" 
+                    class="page-link"
+                >Previous</a>
+            </li>
+            {% for i in 0..nbPage %}
+                {% if i == 0 %}
+                    <li class="page-item {% if active == i %}active{% endif %}">
+                        <a 
+                            href="{{ path( app.request.attributes.get('_route'), app.request.query.all|merge({'page': null})) }}" 
+                            class="page-link"
+                        >{{ i }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item {% if active == i %}active{% endif %}">
+                        <a 
+                            href="{{ path( app.request.attributes.get('_route'), app.request.query.all|merge({'page': i})) }}" 
+                            class="page-link"
+                        >{{ i }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <li class="page-item"><a href="#" class="page-link">Next</a></li>
+        </ul>
+    </nav>
+{% else %}
+{% endif %}

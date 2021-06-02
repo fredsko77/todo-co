@@ -22,15 +22,34 @@ class TaskRepository extends ServiceEntityRepository
     /**
      * @param int $page
      * @param int $itemsPerPage
-     *
-     * @return Tasks[]
      */
-    public function findPaginatedTasks(int $page = 0, int $itemsPerPage = 30, array $criteria = [], string $orderBy = 'ASC'): array
+    public function findTasks(int $page = 0, int $itemsPerPage = 30, array $criteria = [], string $orderBy = 'ASC')
+    {
+
+        $query = $this->createQueryBuilder('t')
+            ->orderBy("t.createdAt", $orderBy)
+        ;
+
+        foreach ($criteria as $k => $c) {
+            $query->where("t.{$k} = $c");
+        }
+
+        return $query;
+    }
+
+    public function countTasks(int $page = 0, int $itemsPerPage = 30, array $criteria = [])
+    {
+        return count($this->findTasks($page, $itemsPerPage, $criteria)
+                ->getQuery()
+                ->getResult()
+        );
+    }
+
+    public function findPaginatedTasks(int $page = 0, int $itemsPerPage = 30, array $criteria = [], string $orderBy = 'ASC')
     {
         $starter = ($page * $itemsPerPage);
 
-        return $this->createQueryBuilder('t')
-            ->orderBy("t.createdAt", $orderBy)
+        return $this->findTasks($page, $itemsPerPage, $criteria, $orderBy)
             ->setFirstResult($starter)
             ->setMaxResults($itemsPerPage)
             ->getQuery()

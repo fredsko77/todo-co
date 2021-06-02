@@ -7,7 +7,10 @@ use App\Repository\SourceRepository;
 trait HelpersTrait
 {
 
-    public function getRoles(): ?array
+    /**
+     * @return array
+     */
+    public function getRoles(): array
     {
         $roles = [];
 

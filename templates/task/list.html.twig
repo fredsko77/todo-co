@@ -3,7 +3,14 @@
 {% block header_img %}<img class="slide-image" src="{{ asset('img/todolist_content.jpg') }}" alt="todo list">{% endblock %}
 
 {% block body %}
+
+    {% include "task/_filters.html.twig" %} 
     <a href="{{ path('task_create') }}" class="btn btn-info pull-right">Créer une tâche</a>
-    <a href="/?status=isDone" class="btn btn-warning pull-right">Consulter la liste des tâches terminées</a>
     {% include "task/_repeater.html.twig" %}
+    {% include "task/_pagination.html.twig" %}
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/filters.js') }}"></script>
 {% endblock %}

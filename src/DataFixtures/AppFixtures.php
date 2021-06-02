@@ -29,7 +29,7 @@ class AppFixtures extends Fixture
         $faker = Factory::create('fr_FR');
         $roles = User::ROLES;
 
-        for ($u = 0; $u < random_int(94, 113); $u++) {
+        for ($u = 0; $u < random_int(44, 59); $u++) {
             $user = new User();
             $password = $this->encoder->encodePassword($user, 'P@ssTod0');
 

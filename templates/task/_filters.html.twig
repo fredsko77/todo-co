@@ -1,0 +1,41 @@
+<div class="row mb-5">
+    <div class="col-12 form">
+        <h1 class="h4">Filtrer les tâches</h1>
+        <div class="form-row justify-content-baseline">
+            <div class="col-2">
+                <div class="form-group">
+                    <div class="form-check">
+                        <input 
+                            type="checkbox" 
+                            name="status" 
+                            id="status" 
+                            value="1" 
+                            class="form-check-input"
+                        >
+                        <label for="status" class="form-check-label">Terminée</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <label for="itemsPerPage">Nombre de résultats</label>
+                <select class="custom-select" name="itemsPerPage" id="itemsPerPage">
+                    <option value="default">Sélectionner une valeur</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                    <option value="60">60</option>
+                </select>
+            </div>
+            <div class="col-4">
+                <label for="sort">Trier par</label>
+                <select class="custom-select" name="sort" id="sort">
+                    <option value="default">Sélectionner une valeur</option>
+                    <option value="ASC">Les plus récentes</option>
+                    <option value="DESC">Les plus anciennes</option>
+                </select>
+            </div>
+        </div>
+
+        <button link="{{ path('task_list') }}" class="btn btn-primary" onclick="handleFilters(this,event)">Filtrer</button>
+
+    </div>
+</div>

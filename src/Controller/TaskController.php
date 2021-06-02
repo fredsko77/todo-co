@@ -32,11 +32,23 @@ class TaskController extends AbstractController
     /**
      * @Route("/tasks", name="task_list")
      */
-    public function listAction()
+    public function listAction(Request $request)
     {
-        return $this->render('task/list.html.twig', [
-            'tasks' => $this->repository->findPaginatedTasks(),
-        ]);
+
+        $page = $request->query->get('page') ? $request->query->get('page') : 0;
+        $itemsPerPage = $request->query->get('itemsPerPage') ? $request->query->get('itemsPerPage') : 30;
+        $criteria = $request->query->get('status') ? ['isDone' => (int) $request->query->get('status')] : [];
+        $orderBy = $request->query->get('sort') ? $request->query->get('sort') : 'ASC';
+        $tasks = $this->repository->findPaginatedTasks(
+            $page,
+            $itemsPerPage,
+            $criteria,
+            $orderBy
+        );
+
+        $nbPage = (int) ceil($this->repository->countTasks($page, $itemsPerPage, $criteria) / $itemsPerPage);
+
+        return $this->render('task/list.html.twig', compact('tasks', 'nbPage'));
     }
 
     /**

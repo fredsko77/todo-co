@@ -132,6 +132,11 @@ footer {
     min-height: 20vh;
 }
 
+.btn-warning,
+.btn-warning:hover {
+    color: var(--white);
+}
+
 .slide-image {
     margin-bottom: 2rem;
     height: 100vh;
@@ -147,4 +152,8 @@ footer {
 
 .slide-image.content {
     max-height: 200px;
+}
+
+#pagination {
+    margin: 3rem 0 1rem;
 }
