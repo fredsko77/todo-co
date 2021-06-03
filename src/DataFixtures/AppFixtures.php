@@ -36,7 +36,7 @@ class AppFixtures extends Fixture
             $user->setUsername($faker->userName)
                 ->setEmail($faker->email)
                 ->setPassword($password)
-                ->setRoles($roles[$u % 6 ? 'Administrateur' : 'Utilisateur'])
+                ->setRoles($roles[$u % 6 ? 'ROLE_USER' : 'ROLE_ADMIN'])
                 ->setCreatedAt($faker->dateTimeBetween('-5months'))
             ;
 
