@@ -35,6 +35,12 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Assert\NotBlank(message="Le mot de passe est obligatoire !")
+     * @Assert\Regex(
+     *  pattern="#^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]){8,}#",
+     *  match="true",
+     *  message="Le mot de passe doit contenir au moins une masjuscule, une minuscule et un chiffre avec au moins 8 caractères !"
+     * )
      */
     private $password;
 

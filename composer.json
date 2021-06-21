@@ -5,11 +5,7 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
+            "App\\": "src/",
             "App\\Tests\\": "tests/"
         }
     },
@@ -47,7 +43,11 @@
         "symfony/maker-bundle": "^1.15",
         "doctrine/doctrine-fixtures-bundle": "^3.3",
         "fzaninotto/faker": "^1.9",
-        "symfony/web-server-bundle": "^4.0"
+        "symfony/web-server-bundle": "^4.0",
+        "phpunit/phpunit": "^9.5",
+        "symfony/browser-kit": "^5.3",
+        "symfony/css-selector": "^5.3",
+        "liip/test-fixtures-bundle": "^1.11"
     },
     "scripts": {
         "symfony-scripts": [

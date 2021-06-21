@@ -27,7 +27,6 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $faker = Factory::create('fr_FR');
-        $roles = User::ROLES;
 
         for ($u = 0; $u < random_int(44, 59); $u++) {
             $user = new User();
@@ -36,7 +35,7 @@ class AppFixtures extends Fixture
             $user->setUsername($faker->userName)
                 ->setEmail($faker->email)
                 ->setPassword($password)
-                ->setRoles($roles[$u % 6 ? 'ROLE_USER' : 'ROLE_ADMIN'])
+                ->setRoles($u % 6 ? ['ROLE_USER'] : ['ROLE_ADMIN'])
                 ->setCreatedAt($faker->dateTimeBetween('-5months'))
             ;
 
