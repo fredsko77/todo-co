@@ -26,29 +26,29 @@ class UserTest extends KernelTestCase
         $this->assertCount($number, $error);
     }
 
-    public function testValidEntity()
+    public function testValidUser()
     {
         $this->assertHasErrors($this->getEntity(), 0);
     }
 
-    public function testInvalidPasswordEntity()
+    public function testInvalidPassword()
     {
         $this->assertHasErrors($this->getEntity()->setPassword('machin'), 0);
         $this->assertHasErrors($this->getEntity()->setPassword(''), 0);
     }
 
-    public function testInvalidUsernameEntity()
+    public function testInvalidUsername()
     {
         $this->assertHasErrors($this->getEntity()->setUsername(''), 0);
     }
 
-    public function testInvalidEmailEntity()
+    public function testInvalidEmail()
     {
         $this->assertHasErrors($this->getEntity()->setEmail(''), 0);
         $this->assertHasErrors($this->getEntity()->setEmail('test-00mail.fr'), 0);
     }
 
-    public function testInvalidRoleEntity()
+    public function testInvalidRole()
     {
         $this->assertHasErrors($this->getEntity()->setRoles(), 0);
     }

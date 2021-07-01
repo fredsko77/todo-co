@@ -28,7 +28,7 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
-        for ($u = 0; $u < random_int(44, 59); $u++) {
+        for ($u = 0; $u < random_int(84, 122); $u++) {
             $user = new User();
             $password = $this->encoder->encodePassword($user, 'P@ssTod0');
 
@@ -39,9 +39,17 @@ class AppFixtures extends Fixture
                 ->setCreatedAt($faker->dateTimeBetween('-5months'))
             ;
 
+            if ($u === 20) {
+                $user->setRoles(['ROLE_USER'])->setEmail('user@user.fr');
+            }
+
+            if ($u === 30) {
+                $user->setRoles(['ROLE_ADMIN'])->setEmail('admin@admin.fr');
+            }
+
             $manager->persist($user);
 
-            for ($t = 0; $t < random_int(0, 98); $t++) {
+            for ($t = 0; $t < random_int(0, 180); $t++) {
                 $task = new Task();
 
                 $task->setContent($faker->paragraph(4, true))

@@ -39,12 +39,10 @@
         {% include "template-parts/masthead.html.twig" %}
         <!-- Flashes Alert Content -->
         {% include "template-parts/flashes.html.twig" %}          
-        <!-- Page title -->
-        <div class="container-fluid">
-            {% block header_title %}{% endblock %}      
-        </div>
         <!-- Main Page Content -->
         <div class="container" id="main-content">
+            <!-- Page title --> 
+            {% block header_title %}{% endblock %}      
             {% block body %}{% endblock %}        
         </div>
         <!-- Footer Content -->
