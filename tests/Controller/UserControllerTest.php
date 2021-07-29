@@ -40,24 +40,32 @@ class UserControllerTest extends WebTestCase
     public function testRegisterActionSubmit()
     {
         $client = static::createClient();
-        $crawler = $client->request('POST', '/register', [
+        $crawler = $client->request('GET', '/register');
+
+        $form = $crawler->selectButton('Enregistrer')->form([
             'registration[username]' => 'faker3',
             'registration[password][first]' => 'fakePass3',
             'registration[password][second]' => 'fakePass3',
             'registration[email]' => 'fagathe77@gmail.com',
         ]);
+
+        $client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function testInvalidRegisterActionSubmit()
     {
         $client = static::createClient();
-        $client->request('POST', '/register', [
+        $crawler = $client->request('GET', '/register');
+
+        $form = $crawler->selectButton('Enregistrer')->form([
             'registration[username]' => 'faker3',
             'registration[password][first]' => 'fakePass3',
             'registration[password][second]' => 'fakePass3',
             'registration[email]' => 'fagathe77@gmail.com',
         ]);
+
+        $client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 

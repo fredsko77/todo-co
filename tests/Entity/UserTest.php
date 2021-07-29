@@ -2,10 +2,13 @@
 namespace App\Tests\Entity;
 
 use App\Entity\User;
+use App\Tests\NeedLogin;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class UserTest extends KernelTestCase
 {
+
+    use NeedLogin;
 
     public function getEntity(): User
     {
@@ -13,10 +16,25 @@ class UserTest extends KernelTestCase
         return $user
             ->setUsername('test')
             ->setEmail('test-00@mail.com')
-            ->setRoles(['ROLE_ADMIN'])
+            ->setRoles(['ROLE_ADMIN', 'ROLE_USER'])
             ->setPassword('P@ssTod0')
             ->setCreatedAt()
+            ->getTasks([])
         ;
+    }
+
+    public function testUserRoles()
+    {
+        self::bootKernel();
+        $roles = $this->getEntity()->getRoles();
+        $this->assertIsArray($roles);
+    }
+
+    public function testUserTasks()
+    {
+        self::bootKernel();
+        $tasks = $this->getEntity()->getTasks();
+        $this->assertIsArray($tasks);
     }
 
     public function assertHasErrors(User $user, int $number)

@@ -28,6 +28,54 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
+        $user_ru = new User();
+
+        $user_ru->setEmail('user@todo.fr')
+            ->setUsername('user123')
+            ->setPassword($this->encoder->encodePassword($user_ru, 'Passuser123'))
+            ->setRoles(['ROLE_USER'])
+            ->setCreatedAt($this->now())
+        ;
+
+        $manager->persist($user_ru);
+
+        for ($ru = 0; $ru < random_int(0, 30); $ru++) {
+            $task = new Task();
+
+            $task->setContent($faker->paragraph(4, true))
+                ->setTitle($faker->sentence(10))
+                ->setUser($user_ru)
+                ->setCreatedAt($faker->dateTimeBetween('-4months'))
+                ->setIsDone($ru % 6 ? true : false)
+            ;
+
+            $manager->persist($task);
+        }
+
+        $user_ra = new User();
+
+        $user_ra->setEmail('admin@todo.fr')
+            ->setUsername('admin123')
+            ->setPassword($this->encoder->encodePassword($user_ru, 'Passadmin123'))
+            ->setRoles(['ROLE_ADMIN'])
+            ->setCreatedAt($this->now())
+        ;
+
+        $manager->persist($user_ra);
+
+        for ($ra = 0; $ra < random_int(0, 30); $ra++) {
+            $task = new Task();
+
+            $task->setContent($faker->paragraph(4, true))
+                ->setTitle($faker->sentence(10))
+                ->setUser($user_ru)
+                ->setCreatedAt($faker->dateTimeBetween('-4months'))
+                ->setIsDone($ra % 6 ? true : false)
+            ;
+
+            $manager->persist($task);
+        }
+
         for ($u = 0; $u < random_int(84, 122); $u++) {
             $user = new User();
             $password = $this->encoder->encodePassword($user, 'P@ssTod0');

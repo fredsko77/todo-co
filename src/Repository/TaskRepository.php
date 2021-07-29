@@ -57,26 +57,6 @@ class TaskRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByUnanonymous(int $isDone = 0): ?Task
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.user_id <> NULL')
-            ->andWhere('t.is_done = :isDone')
-            ->setParameter('idDone', $isDone)
-            ->getFirstResult()
-        ;
-    }
-
-    public function findByUser(int $isDone = 0): ?Task
-    {
-        return $this->createQueryBuilder('t')
-            ->andWhere('t.user_id = NULL')
-            ->andWhere('t.is_done = :isDone')
-            ->setParameter('idDone', $isDone)
-            ->getFirstResult()
-        ;
-    }
-
     // /**
     //  * @return Task[] Returns an array of Task objects
     //  */

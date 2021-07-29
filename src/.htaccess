@@ -5,3 +5,7 @@
     Order deny,allow
     Deny from all
 </IfModule>
+<IfModule mod_php5.c>
+    php_admin_value blackfire.server_id "e0b30241-a25d-4162-9ebb-329f784f1fc7"
+    php_admin_value blackfire.server_token "3ac2260e038f138a5bca515b72c0205117d886777cf6472b14beabb704e06aa1"
+</IfModule>

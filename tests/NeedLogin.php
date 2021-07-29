@@ -32,7 +32,7 @@ trait NeedLogin
     final public function getUser(KernelBrowser $client, ?string $roles = 'user')
     {
         return $client->getContainer()->get('doctrine')->getRepository(User::class)->findOneBy([
-            'email' => $roles . '@' . $roles . '.fr',
+            'email' => $roles . '@todo.fr',
         ]);
     }
 

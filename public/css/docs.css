@@ -1,0 +1,16 @@
+.docs-link {
+    color: inherit;
+}
+
+.docs-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.docs-section .h3 {
+    margin-bottom: 0;
+}
+
+.docs-section .docs-section-text {
+    margin-top: 5px;
+}
