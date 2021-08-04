@@ -1,202 +1,204 @@
 <?php
 namespace App\Tests\Controller;
 
-use App\Tests\NeedLogin;
+use App\Entity\Task;
+use App\Tests\Utils;
 use App\Traits\ServicesTrait;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class TaskControllerTest extends WebTestCase
+class TaskControllerTest extends Utils
 {
-
-    use NeedLogin;
     use ServicesTrait;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+    }
+
+    private function getAnonymousTask(): Task
+    {
+        return $this->entityManager->getRepository(Task::class)->findOneBy(['user' => null]);
+    }
+
+    private function getTask(): Task
+    {
+        return $this->entityManager->getRepository(Task::class)->findOneBy(['isDone' => 1]);
+    }
+
+    private function getUserTask(): Task
+    {
+        return $this->entityManager->getRepository(Task::class)->findOneBy(['user' => $this->getUser()]);
+    }
+
+    private function getAdminTask(): Task
+    {
+        return $this->entityManager->getRepository(Task::class)->findOneBy(['user' => $this->getAdmin()]);
+    }
 
     public function testTaskList()
     {
-        $client = static::createClient();
-        $client->request('GET', '/tasks');
+        $this->client->request('GET', $this->domain . '/tasks');
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
     }
 
     public function testTaskListWhenAlreadyLogged()
     {
-        $client = static::createClient();
-        $this->login($client);
-        $client->request('GET', '/tasks');
+        $this->createUserClient();
+        $this->client->request('GET', $this->domain . '/tasks');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function testTaskCreate()
     {
-        $client = static::createClient();
-        $client->request('GET', '/tasks/create');
+        $this->client->request('GET', $this->domain . '/tasks/create');
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
     }
 
     public function testTaskCreateWhenAlreadyLogged()
     {
-        $client = static::createClient();
-        $this->login($client);
-        $client->request('GET', '/tasks/create');
+        $this->createUserClient();
+        $this->client->request('GET', $this->domain . '/tasks/create');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function testTaskCreateSubmit()
     {
-        $client = static::createClient();
-        $client->request('POST', '/tasks/create');
+        $this->client->request('POST', $this->domain . '/tasks/create');
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
     }
 
     public function testTaskCreateSubmitWhenAlreadyLogged()
     {
-        $client = static::createClient();
-        $this->login($client);
-        $crawler = $client->request('POST', '/tasks/create');
+        $crawler = $this->createUserClient();
 
-        $form = $crawler->selectButton('Ajouter')->form([
-            'task[title]' => "Ma super tâche !",
-            'task[content]' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero facilis vel vero doloribus assumenda, cupiditate alias, ab accusantium ullam labore et dolores magni cumque nemo fuga natus eius dicta! Velit.',
-        ]);
+        $crawler = $this->client->request('GET', $this->domain . "/tasks/create");
 
-        $client->submit($form);
+        $form = $crawler->selectButton('Ajouter')->form();
+        $form['task[title]'] = "Ma super tâche !";
+        $form['task[content]'] = 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero facilis vel vero doloribus assumenda, cupiditate alias, ab accusantium ullam labore et dolores magni cumque nemo fuga natus eius dicta! Velit.';
+
+        $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
     }
 
     public function testToggleTask()
     {
-        $client = static::createClient();
-        $task = $this->getTask($client);
-        $client->request('POST', '/tasks/' . $task->getId() . '/toggle');
+        $user = $this->getUser();
+        $task = $this->entityManager->getRepository(Task::class)->findOneBy(['user' => $user]);
+        $this->client->request('POST', '/tasks/' . $task->getId() . '/toggle');
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
     }
 
     public function testToggleTaskByAdmin()
     {
-        $client = static::createClient();
-        $this->login($client, null, 'admin');
-        $task = $this->getAnonymousTask($client);
+        $crawler = $this->createAdminClient();
+        $task = $this->getAnonymousTask();
 
-        $client->request('POST', '/tasks/' . $task->getId() . '/toggle');
+        $this->client->request('POST', '/tasks/' . $task->getId() . '/toggle');
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
     }
 
     public function testToggleTaskByUser()
     {
-        $client = static::createClient();
-        $task = $this->getTask($client);
-        $this->login($client, $task->getUser());
-        $client->request('POST', '/tasks/' . $task->getId() . '/toggle');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $crawler = $this->createUserClient();
+        $task = $this->entityManager->getRepository(Task::class)->findOneBy(['user' => $this->getUser()]);
+        $this->client->request('POST', '/tasks/' . $task->getId() . '/toggle');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testToggleTaskForbidden()
     {
-        $client = static::createClient();
-        $task = $this->getTask($client);
-        $this->login($client, null, 'user');
-        $client->request('POST', '/tasks/' . $task->getId() . '/toggle');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
-        // $client->followRedirect();
+        $crawler = $this->createUserClient();
+        $task = $this->entityManager->getRepository(Task::class)->findOneBy(['user' => $this->getAdmin()]);
+        $this->client->request('POST', '/tasks/' . $task->getId() . '/toggle');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $this->client->followRedirect();
     }
 
     public function testTaskEdit()
     {
-        $client = static::createClient();
-        $task = $this->getTask($client, );
-        $client->request('GET', '/tasks/' . $task->getId() . '/edit');
+        $this->client->request('GET', '/tasks/' . $this->getTask()->getId() . '/edit');
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
     }
 
     public function testTaskEditWhenAlreadyLogged()
     {
-        $client = static::createClient();
-        $task = $this->getTask($client);
-        $this->login($client, $task->getUser());
-        $client->request('GET', '/tasks/' . $task->getId() . '/edit');
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $crawler = $this->createUserClient();
+        $this->client->request('GET', '/tasks/' . $this->getUserTask()->getId() . '/edit');
+        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
     }
 
     public function testTaskEditSubmit()
     {
-        $client = static::createClient();
-        $task = $this->getTask($client);
-        $client->request('POST', '/tasks/' . $task->getId() . '/edit');
-        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $crawler = $this->createUserClient();
+        $this->client->request('POST', '/tasks/' . $this->getAdminTask()->getId() . '/edit');
+        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
     }
 
     public function testTaskEditSubmitWhenAlreadyLogged()
     {
-        $client = static::createClient();
-        $task = $this->getTask($client);
-        $this->login($client, $task->getUser());
-        $crawler = $client->request('GET', '/tasks/' . $task->getId() . '/edit');
+        $this->createAdminClient();
+
+        $crawler = $this->client->request('GET', '/tasks/' . $this->getAdminTask()->getId() . '/edit');
         $form = $crawler->selectButton('Modifier')->form([
             'task[title]' => "Ma super tâche !",
             'task[content]' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero facilis vel vero doloribus assumenda, cupiditate alias, ab accusantium ullam labore et dolores magni cumque nemo fuga natus eius dicta! Velit.',
         ]);
 
-        $client->submit($form);
+        $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
     }
 
     public function testTaskAnonymousEditSubmitWhenAlreadyLogged()
     {
-        $client = static::createClient();
-        $task = $this->getAnonymousTask($client);
-        $this->login($client, null, 'admin');
-        $crawler = $client->request('GET', '/tasks/' . $task->getId() . '/edit');
+        $crawler = $this->createAdminClient();
+        $crawler = $this->client->request('GET', '/tasks/' . $this->getAnonymousTask()->getId() . '/edit');
 
         $form = $crawler->selectButton('Modifier')->form([
             'task[title]' => "Ma super tâche !",
             'task[content]' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Libero facilis vel vero doloribus assumenda, cupiditate alias, ab accusantium ullam labore et dolores magni cumque nemo fuga natus eius dicta! Velit.',
         ]);
 
-        $client->submit($form);
+        $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
     }
 
     public function testTaskDelete()
     {
-        $client = static::createClient();
-        $task = $this->getTask($client);
-        $this->login($client, $task->getUser());
-        $client->request('GET', '/tasks/' . $task->getId() . '/delete');
+        $crawler = $this->client->request('GET', '/tasks/' . $this->getAnonymousTask()->getId() . '/delete');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
     }
 
     public function testTaskDeleteInvalidUser()
     {
-        $client = static::createClient();
-        $task = $this->getTask($client);
-        $this->login($client);
-        $client->request('GET', '/tasks/' . $task->getId() . '/delete');
+        $crawler = $this->createUserClient();
+        $this->client->request('GET', '/tasks/' . $this->getAnonymousTask()->getId() . '/delete');
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_FORBIDDEN);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $this->client->followRedirect();
     }
 
     public function testTaskAnonymousDelete()
     {
-        $client = static::createClient();
-        $task = $this->getAnonymousTask($client);
-        $this->login($client, null, 'admin');
-        $client->request('GET', '/tasks/' . $task->getId() . '/delete');
+        $this->createAdminClient();
+        $this->client->request('GET', '/tasks/' . $this->getAnonymousTask()->getId() . '/delete');
 
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
+        $this->client->followRedirect();
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
     }
 }

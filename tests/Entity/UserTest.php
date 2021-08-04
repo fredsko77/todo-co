@@ -2,18 +2,27 @@
 namespace App\Tests\Entity;
 
 use App\Entity\User;
-use App\Tests\NeedLogin;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class UserTest extends KernelTestCase
 {
-
-    use NeedLogin;
-
-    public function getEntity(): User
+    public function getUser(): User
     {
-        $user = new User;
-        return $user
+        return (new User)
+            ->setUsername('tatayoyo')
+            ->setEmail('test-00@mail.com')
+            ->setRoles(['ROLE_ADMIN'])
+            ->setPassword('P@ssTod0')
+            ->setCreatedAt()
+            ->setRoles(['ROLE_ADMIN'])
+            ->setCreatedAt()
+        ;
+    }
+
+    public function testUserRoles()
+    {
+        self::bootKernel();
+        $user = (new User)
             ->setUsername('test')
             ->setEmail('test-00@mail.com')
             ->setRoles(['ROLE_ADMIN', 'ROLE_USER'])
@@ -21,20 +30,8 @@ class UserTest extends KernelTestCase
             ->setCreatedAt()
             ->getTasks([])
         ;
-    }
-
-    public function testUserRoles()
-    {
-        self::bootKernel();
-        $roles = $this->getEntity()->getRoles();
+        $roles = $this->getUser()->getRoles();
         $this->assertIsArray($roles);
-    }
-
-    public function testUserTasks()
-    {
-        self::bootKernel();
-        $tasks = $this->getEntity()->getTasks();
-        $this->assertIsArray($tasks);
     }
 
     public function assertHasErrors(User $user, int $number)
@@ -46,28 +43,28 @@ class UserTest extends KernelTestCase
 
     public function testValidUser()
     {
-        $this->assertHasErrors($this->getEntity(), 0);
+        $this->assertHasErrors($this->getUser(), 0);
     }
 
     public function testInvalidPassword()
     {
-        $this->assertHasErrors($this->getEntity()->setPassword('machin'), 0);
-        $this->assertHasErrors($this->getEntity()->setPassword(''), 0);
+        $this->assertHasErrors($this->getUser()->setPassword('Machine'), 1);
+        $this->assertHasErrors($this->getUser()->setPassword(''), 1);
     }
 
     public function testInvalidUsername()
     {
-        $this->assertHasErrors($this->getEntity()->setUsername(''), 0);
+        $this->assertHasErrors($this->getUser()->setUsername(''), 1);
     }
 
     public function testInvalidEmail()
     {
-        $this->assertHasErrors($this->getEntity()->setEmail(''), 0);
-        $this->assertHasErrors($this->getEntity()->setEmail('test-00mail.fr'), 0);
+        $this->assertHasErrors($this->getUser()->setEmail(''), 1);
+        $this->assertHasErrors($this->getUser()->setEmail('test-00mail.fr'), 1);
     }
 
     public function testInvalidRole()
     {
-        $this->assertHasErrors($this->getEntity()->setRoles(), 0);
+        $this->assertHasErrors($this->getUser()->setRoles(), 0);
     }
 }

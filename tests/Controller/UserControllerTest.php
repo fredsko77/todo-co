@@ -2,18 +2,22 @@
 namespace App\Tests\Controller;
 
 use App\Tests\NeedLogin;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Utils;
 use Symfony\Component\HttpFoundation\Response;
 
-class UserControllerTest extends WebTestCase
+class UserControllerTest extends Utils
 {
 
     use NeedLogin;
 
+    public function setUp(): void
+    {
+        parent::setUp();
+    }
+
     public function testRegisterAction()
     {
-        $client = static::createClient();
-        $client->request('GET', '/register');
+        $this->client->request('GET', '/register');
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
         $this->assertSelectorTextContains('h1', 'Inscription');
         $this->assertSelectorNotExists('.alert.alert-danger');
@@ -21,52 +25,46 @@ class UserControllerTest extends WebTestCase
 
     public function testRegisterWhenAlreadyLogged()
     {
-        $client = static::createClient();
-        $this->login($client);
-        $client->request('GET', '/register');
+        $this->createUserClient();
+        $this->client->request('GET', '/register');
         $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
-        $client->followRedirect();
-    }
-
-    public function testRegister()
-    {
-        $client = static::createClient();
-        $client->request('GET', '/register');
-        $user = $this->getUser($client);
-        $this->login($client, $user);
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->client->followRedirect();
     }
 
     public function testRegisterActionSubmit()
     {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/register');
+        $crawler = $this->client->request('GET', '/register');
 
         $form = $crawler->selectButton('Enregistrer')->form([
-            'registration[username]' => 'faker3',
-            'registration[password][first]' => 'fakePass3',
-            'registration[password][second]' => 'fakePass3',
-            'registration[email]' => 'fagathe77@gmail.com',
+            'registration[username]' => 'faker' . random_int(10, 125000),
+            'registration[password][first]' => 'PassTod0',
+            'registration[password][second]' => 'PassTod0',
+            'registration[email]' => 'fagathe' . random_int(0, 99) . '@gmail.com',
         ]);
 
-        $client->submit($form);
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        $this->client->submit($form);
+        $this->assertResponseStatusCodeSame(Response::HTTP_FOUND);
+        $this->client->followRedirect();
     }
 
     public function testInvalidRegisterActionSubmit()
     {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/register');
+        $crawler = $this->client->request('GET', '/register');
 
         $form = $crawler->selectButton('Enregistrer')->form([
             'registration[username]' => 'faker3',
-            'registration[password][first]' => 'fakePass3',
+            'registration[password][first]' => 'fakePass',
             'registration[password][second]' => 'fakePass3',
             'registration[email]' => 'fagathe77@gmail.com',
         ]);
 
-        $client->submit($form);
+        $this->client->submit($form);
         $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+    }
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
     }
 
 }

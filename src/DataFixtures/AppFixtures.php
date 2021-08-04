@@ -28,6 +28,16 @@ class AppFixtures extends Fixture
     {
         $faker = Factory::create('fr_FR');
 
+        $anonymousTask = new Task();
+
+        $anonymousTask->setContent($faker->paragraph(4, true))
+            ->setTitle($faker->sentence(10))
+            ->setCreatedAt($faker->dateTimeBetween('-4months'))
+            ->setIsDone(false)
+        ;
+
+        $manager->persist($anonymousTask);
+
         $user_ru = new User();
 
         $user_ru->setEmail('user@todo.fr')
@@ -39,7 +49,7 @@ class AppFixtures extends Fixture
 
         $manager->persist($user_ru);
 
-        for ($ru = 0; $ru < random_int(0, 30); $ru++) {
+        for ($ru = 0; $ru < random_int(1, 6); $ru++) {
             $task = new Task();
 
             $task->setContent($faker->paragraph(4, true))
@@ -63,7 +73,7 @@ class AppFixtures extends Fixture
 
         $manager->persist($user_ra);
 
-        for ($ra = 0; $ra < random_int(0, 30); $ra++) {
+        for ($ra = 0; $ra < random_int(1, 5); $ra++) {
             $task = new Task();
 
             $task->setContent($faker->paragraph(4, true))
@@ -76,39 +86,70 @@ class AppFixtures extends Fixture
             $manager->persist($task);
         }
 
-        for ($u = 0; $u < random_int(84, 122); $u++) {
+        for ($u = 0; $u < random_int(40, 55); $u++) {
             $user = new User();
             $password = $this->encoder->encodePassword($user, 'P@ssTod0');
 
             $user->setUsername($faker->userName)
-                ->setEmail($faker->email)
+                ->setEmail('user-0' . $u . '@todo.fr')
                 ->setPassword($password)
-                ->setRoles($u % 6 ? ['ROLE_USER'] : ['ROLE_ADMIN'])
+                ->setRoles(['ROLE_USER'])
                 ->setCreatedAt($faker->dateTimeBetween('-5months'))
             ;
 
-            if ($u === 20) {
-                $user->setRoles(['ROLE_USER'])->setEmail('user@user.fr');
-            }
-
-            if ($u === 30) {
-                $user->setRoles(['ROLE_ADMIN'])->setEmail('admin@admin.fr');
-            }
-
             $manager->persist($user);
 
-            for ($t = 0; $t < random_int(0, 180); $t++) {
+            for ($t = 0; $t < random_int(8, 45); $t++) {
                 $task = new Task();
 
                 $task->setContent($faker->paragraph(4, true))
                     ->setTitle($faker->sentence(10))
-                    ->setUser($u % 5 ? $user : null)
+                    ->setUser($user)
                     ->setCreatedAt($faker->dateTimeBetween('-4months'))
                     ->setIsDone($u % 7 ? true : false)
                 ;
 
                 $manager->persist($task);
             }
+        }
+
+        for ($a = 0; $a < random_int(40, 50); $a++) {
+            $user = new User();
+            $password = $this->encoder->encodePassword($user, 'P@ssTod0');
+
+            $user->setUsername($faker->userName)
+                ->setEmail('admin-0' . $a . '@todo.fr')
+                ->setPassword($password)
+                ->setRoles(['ROLE_ADMIN'])
+                ->setCreatedAt($faker->dateTimeBetween('-5months'))
+            ;
+
+            $manager->persist($user);
+
+            for ($t = 0; $t < random_int(8, 30); $t++) {
+                $task = new Task();
+
+                $task->setContent($faker->paragraph(4, true))
+                    ->setTitle($faker->sentence(10))
+                    ->setUser($user)
+                    ->setCreatedAt($faker->dateTimeBetween('-4months'))
+                    ->setIsDone($u % 7 ? true : false)
+                ;
+
+                $manager->persist($task);
+            }
+        }
+
+        for ($t = 0; $t < random_int(1, 180); $t++) {
+            $task = new Task();
+
+            $task->setContent($faker->paragraph(4, true))
+                ->setTitle($faker->sentence(10))
+                ->setCreatedAt($faker->dateTimeBetween('-4months'))
+                ->setIsDone($t % 7 ? true : false)
+            ;
+
+            $manager->persist($task);
         }
 
         $manager->flush();

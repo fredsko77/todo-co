@@ -14,7 +14,7 @@
 !var/SymfonyRequirements.php
 /vendor/
 /web/bundles/
-/tests/coverage/
+# /tests/coverage/
 
 ###> symfony/phpunit-bridge ###
 .phpunit

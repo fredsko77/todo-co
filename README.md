@@ -74,17 +74,36 @@ Un compte avec le rôle administrateur a déjà été crée, utilisez le pour te
 
 ## Tests
 
+> **Attention:** Avant de faire les test .
+>
+> Télécharger l'extension php xdebug et configurer le fichier php.ini.
+
 1. Mettre à jour le fichier **phpunit.xml.dist** à la racine du projet pour créer une base de données de tests
 ```
 <env name="DATABASE_URL" value="DATABASE_URL=mysql://db_user:db_password@127.0.0.1:3306/db__test_name"/>
 ```
 
-2. Lancer les tests
+2. Créer la base de données de test 
+``` 
+php bin/console doctrine:database:create --env=test
+```
+
+3. Executer les fichiers de migrations 
+``` 
+php bin/console doctrine:migrations:migrate --env=test
+```
+
+4. Générer les données de test 
+``` 
+php bin/console doctrine:fixtures:load --env=test
+```
+
+5. Lancer les tests
 ```
 php bin/phpunit
 ```
 
-3. Afficher les détails sur la couverture de code des tests dans un fichier HTML 
+6. Afficher les détails sur la couverture de code des tests dans un fichier HTML 
 ```
 php bin/phpunit --coverage-html=tests/coverage
 ```

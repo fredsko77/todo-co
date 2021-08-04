@@ -12,10 +12,10 @@ class TaskTest extends KernelTestCase
     {
         return (new Task)
             ->setContent('contenu de test')
-            ->setCreatedAt()
             ->setIsDone()
             ->setTitle('mon titre test')
             ->setUser($this->getUser())
+            ->setCreatedAt()
         ;
     }
 
@@ -26,6 +26,8 @@ class TaskTest extends KernelTestCase
             ->setEmail('test-00@mail.com')
             ->setRoles(['ROLE_ADMIN'])
             ->setPassword('P@ssTod0')
+            ->setCreatedAt()
+            ->setRoles(['ROLE_ADMIN'])
             ->setCreatedAt()
         ;
     }
@@ -49,7 +51,7 @@ class TaskTest extends KernelTestCase
     {
         $this->assertHasErrors(
             $this->getTask()->setContent(''),
-            0
+            1
         );
     }
 
@@ -57,7 +59,7 @@ class TaskTest extends KernelTestCase
     {
         $this->assertHasErrors(
             $this->getTask()->setTitle(''),
-            0
+            1
         );
     }
 

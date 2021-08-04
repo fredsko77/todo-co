@@ -130,10 +130,11 @@ class TaskController extends AbstractController
     {
 
         $this->denyAccessUnlessGranted('task_delete', $task);
-        // $this->manager->remove($task);
-        // $this->manager->flush();
 
         $this->addFlash('success', 'La tâche a bien été supprimée.');
+
+        $this->manager->remove($task);
+        $this->manager->flush();
 
         return $this->redirectToRoute('task_list');
     }

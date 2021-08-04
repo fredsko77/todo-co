@@ -1,36 +1,42 @@
 <?php
 namespace App\Tests\Controller;
 
-use App\Tests\NeedLogin;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Utils;
 use Symfony\Component\HttpFoundation\Response;
 
-class DefaultControllerTest extends WebTestCase
+class DefaultControllerTest extends Utils
 {
 
-    use NeedLogin;
-
-    public function testDefaultHomePage()
+    public function setUp(): void
     {
-        $client = static::createClient();
-        $client->request('GET', '/');
-
-        $this->assertSelectorTextContains('a.btn.btn-primary', 'Commencer');        
-        $this->assertSelectorNotExists('a.btn.btn-success');
-        
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+        parent::setUp();
     }
-    
-    public function testLoggedHomePage()
-    {
-        $client = static::createClient();
-        $this->login($client);
-        $client->request('GET', '/');
-        
-        $this->assertSelectorTextContains('a.btn.btn-success', 'Créer une nouvelle tâche');
-        $this->assertSelectorNotExists('a.btn.btn-primary'); 
 
-        $this->assertResponseStatusCodeSame(Response::HTTP_OK);
+    public function testHomepageWhenConnected()
+    {
+        // Se connecter en tant qu'utilisateur ROLE_USER
+        $this->createUserClient();
+        
+        $this->client->request('GET', $this->domain . '/');
+
+        // Assert where are on the homepage by asserting greeting
+        static::assertResponseIsSuccessful();
+        static::assertSelectorTextContains('h1', "Bienvenue sur Todo List, l'application vous permettant de gérer l'ensemble de vos tâches sans effort !");
+
+        // Route is 'app_home'
+        static::assertRouteSame('app_home');
+    }
+
+    public function test404WhenFakeLink()
+    {
+        // Assert that not existing route return 404
+        $this->client->request('GET', $this->domain . '/-1');
+        static::assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
     }
 
 }
