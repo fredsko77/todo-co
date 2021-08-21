@@ -31,14 +31,15 @@
         "symfony/asset": "^4.4",
         "symfony/twig-bundle": "^4.4",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "symfony/requirements-checker": "^2.0",
+        "symfony/dotenv": "^4.4"
     },
     "conflict": {
         "symfony/symfony": "*"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.0",
-        "symfony/dotenv": "^4.0",
         "symfony/debug-pack": "^1.0",
         "symfony/maker-bundle": "^1.15",
         "doctrine/doctrine-fixtures-bundle": "^3.3",
@@ -66,7 +67,8 @@
         ],
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "requirements-checker": "script"
         }
     },
     "extra": {

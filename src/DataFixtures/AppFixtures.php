@@ -86,7 +86,7 @@ class AppFixtures extends Fixture
             $manager->persist($task);
         }
 
-        for ($u = 0; $u < random_int(40, 55); $u++) {
+        for ($u = 0; $u < random_int(20, 35); $u++) {
             $user = new User();
             $password = $this->encoder->encodePassword($user, 'P@ssTod0');
 
@@ -99,7 +99,7 @@ class AppFixtures extends Fixture
 
             $manager->persist($user);
 
-            for ($t = 0; $t < random_int(8, 45); $t++) {
+            for ($t = 0; $t < random_int(10, 28); $t++) {
                 $task = new Task();
 
                 $task->setContent($faker->paragraph(4, true))
@@ -113,7 +113,7 @@ class AppFixtures extends Fixture
             }
         }
 
-        for ($a = 0; $a < random_int(40, 50); $a++) {
+        for ($a = 0; $a < random_int(2, 8); $a++) {
             $user = new User();
             $password = $this->encoder->encodePassword($user, 'P@ssTod0');
 
@@ -126,7 +126,7 @@ class AppFixtures extends Fixture
 
             $manager->persist($user);
 
-            for ($t = 0; $t < random_int(8, 30); $t++) {
+            for ($t = 0; $t < random_int(8, 20); $t++) {
                 $task = new Task();
 
                 $task->setContent($faker->paragraph(4, true))
@@ -140,7 +140,7 @@ class AppFixtures extends Fixture
             }
         }
 
-        for ($t = 0; $t < random_int(1, 180); $t++) {
+        for ($t = 0; $t < random_int(20, 68); $t++) {
             $task = new Task();
 
             $task->setContent($faker->paragraph(4, true))
