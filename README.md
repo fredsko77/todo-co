@@ -110,8 +110,8 @@ php bin/phpunit --coverage-html=tests/coverage
 
 ## Blackfire 
 
-Installer [blackfire](/blob/master/README.md) pour analyser la performance de votre codes
+Installer [blackfire](https://blackfire.io/docs/up-and-running/installation) pour analyser la performance de votre codes
 
 ## Contributing
 
-To contribute see [CONTRIBUTING.md](https://github.com/JeanD34/p8-sf4/blob/master/CONTRIBUTING.md)
+To contribute see [CONTRIBUTING.md](https://github.com/fredsko77/todo-co/blob/master/CONTRIBUTING.md)

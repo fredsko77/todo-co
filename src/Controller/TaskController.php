@@ -92,7 +92,6 @@ class TaskController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $referer = $request->headers->get('referer');
             $this->manager->persist($task);
             $this->manager->flush();
 
